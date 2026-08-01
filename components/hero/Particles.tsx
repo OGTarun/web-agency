@@ -54,7 +54,7 @@ export default function Particles() {
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        color="#ddd6fe"
+        color="#cbd5e1"
         depthWrite={false}
         opacity={0.4}
         size={0.02}

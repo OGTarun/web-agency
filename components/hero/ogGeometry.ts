@@ -1,127 +1,100 @@
 import * as THREE from "three";
 
-export const MONOLITH = {
-  width: 3.0,
-  height: 1.7,
-  cornerRadius: 0.34,
-  depth: 0.28,
+const GLYPH = {
+  outerRadius: 0.46,
+  innerRadius: 0.28,
+  gapHalfAngle: 0.42,
+  depth: 0.24,
   bevel: 0.05,
 };
 
-export const PLINTH = {
-  width: 3.3,
-  height: 1.95,
-  cornerRadius: 0.36,
-  depth: 0.1,
+const LAYOUT = {
+  oCenter: -0.55,
+  gCenter: 0.55,
 };
 
-export const WINDOW = {
-  oCenter: -0.75,
-  gCenter: 0.75,
-  radius: 0.68,
+const BAR = {
+  xLeft: -0.34,
+  xRight: 0.4,
+  yBottom: -0.02,
+  yTop: 0.2,
+  radius: 0.04,
 };
 
-export const GLYPH = {
-  outerRadius: 0.56,
-  innerRadius: 0.32,
-  gOpening: 0.62,
-  depth: 0.22,
-};
+function extrude(shapes: THREE.Shape[]) {
+  return new THREE.ExtrudeGeometry(shapes, {
+    bevelEnabled: true,
+    bevelSegments: 6,
+    bevelSize: GLYPH.bevel,
+    bevelThickness: GLYPH.bevel,
+    curveSegments: 64,
+    depth: GLYPH.depth,
+  });
+}
 
-function createRoundedRectShape(width: number, height: number, radius: number) {
+function createOGlyphShape() {
+  const { outerRadius: outer, innerRadius: inner } = GLYPH;
   const shape = new THREE.Shape();
-  const x = -width / 2;
-  const y = -height / 2;
+  shape.absarc(LAYOUT.oCenter, 0, outer, 0, Math.PI * 2, false);
 
-  shape.moveTo(x + radius, y);
-  shape.lineTo(x + width - radius, y);
-  shape.absarc(x + width - radius, y + radius, radius, -Math.PI / 2, 0, false);
-  shape.lineTo(x + width, y + height - radius);
-  shape.absarc(x + width - radius, y + height - radius, radius, 0, Math.PI / 2, false);
-  shape.lineTo(x + radius, y + height);
-  shape.absarc(x + radius, y + height - radius, radius, Math.PI / 2, Math.PI, false);
-  shape.lineTo(x, y + radius);
-  shape.absarc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5, false);
+  const hole = new THREE.Path();
+  hole.absarc(LAYOUT.oCenter, 0, inner, 0, Math.PI * 2, false);
+  shape.holes.push(hole);
+
+  return shape;
+}
+
+function createGGlyphShape() {
+  const { outerRadius: outer, innerRadius: inner, gapHalfAngle: opening } = GLYPH;
+  const shape = new THREE.Shape();
+
+  shape.moveTo(
+    LAYOUT.gCenter + Math.cos(opening) * outer,
+    Math.sin(opening) * outer,
+  );
+  shape.absarc(
+    LAYOUT.gCenter,
+    0,
+    outer,
+    opening,
+    Math.PI * 2 - opening,
+    false,
+  );
+  shape.lineTo(
+    LAYOUT.gCenter + Math.cos(Math.PI * 2 - opening) * inner,
+    Math.sin(Math.PI * 2 - opening) * inner,
+  );
+  shape.absarc(
+    LAYOUT.gCenter,
+    0,
+    inner,
+    Math.PI * 2 - opening,
+    opening,
+    true,
+  );
   shape.closePath();
 
   return shape;
 }
 
-function createCirclePath(centerX: number, radius: number) {
-  const path = new THREE.Path();
-  path.absarc(centerX, 0, radius, 0, Math.PI * 2, false);
-  return path;
-}
-
-export function createMonolithGeometry() {
-  const shape = createRoundedRectShape(MONOLITH.width, MONOLITH.height, MONOLITH.cornerRadius);
-
-  shape.holes.push(
-    createCirclePath(WINDOW.oCenter, WINDOW.radius),
-    createCirclePath(WINDOW.gCenter, WINDOW.radius),
-  );
-
-  return new THREE.ExtrudeGeometry(shape, {
-    bevelEnabled: true,
-    bevelSegments: 5,
-    bevelSize: MONOLITH.bevel,
-    bevelThickness: MONOLITH.bevel,
-    curveSegments: 64,
-    depth: MONOLITH.depth,
-  });
-}
-
-export function createPlinthGeometry() {
-  const shape = createRoundedRectShape(PLINTH.width, PLINTH.height, PLINTH.cornerRadius);
-
-  return new THREE.ExtrudeGeometry(shape, {
-    bevelEnabled: true,
-    bevelSegments: 3,
-    bevelSize: 0.02,
-    bevelThickness: 0.02,
-    curveSegments: 64,
-    depth: PLINTH.depth,
-  });
-}
-
-export function createOGlyphGeometry() {
-  const shape = new THREE.Shape();
-  shape.absarc(0, 0, GLYPH.outerRadius, 0, Math.PI * 2, false);
-  shape.holes.push(createCirclePath(0, GLYPH.innerRadius));
-
-  return new THREE.ExtrudeGeometry(shape, {
-    bevelEnabled: true,
-    bevelSegments: 3,
-    bevelSize: 0.02,
-    bevelThickness: 0.02,
-    curveSegments: 48,
-    depth: GLYPH.depth,
-  });
-}
-
-export function createGGlyphGeometry() {
-  const { outerRadius: outer, innerRadius: inner, gOpening: opening } = GLYPH;
+function createGBarShape() {
+  const { xLeft, xRight, yBottom, yTop, radius } = BAR;
   const shape = new THREE.Shape();
 
-  shape.moveTo(Math.cos(opening) * outer, Math.sin(opening) * outer);
-  shape.absarc(0, 0, outer, opening, Math.PI * 2 - opening, false);
-  shape.lineTo(
-    Math.cos(Math.PI * 2 - opening) * inner,
-    Math.sin(Math.PI * 2 - opening) * inner,
-  );
-  shape.absarc(0, 0, inner, Math.PI * 2 - opening, opening, true);
+  shape.moveTo(xLeft + radius, yBottom);
+  shape.lineTo(xRight - radius, yBottom);
+  shape.absarc(xRight - radius, yBottom + radius, radius, -Math.PI / 2, 0, false);
+  shape.lineTo(xRight, yTop - radius);
+  shape.absarc(xRight - radius, yTop - radius, radius, 0, Math.PI / 2, false);
+  shape.lineTo(xLeft + radius, yTop);
+  shape.absarc(xLeft + radius, yTop - radius, radius, Math.PI / 2, Math.PI, false);
+  shape.lineTo(xLeft, yBottom + radius);
+  shape.absarc(xLeft + radius, yBottom + radius, radius, Math.PI, Math.PI * 1.5, false);
   shape.closePath();
 
-  return new THREE.ExtrudeGeometry(shape, {
-    bevelEnabled: true,
-    bevelSegments: 3,
-    bevelSize: 0.02,
-    bevelThickness: 0.02,
-    curveSegments: 48,
-    depth: GLYPH.depth,
-  });
+  return shape;
 }
 
-export function createChamberShape(width: number, height: number, radius: number) {
-  return createRoundedRectShape(width, height, radius);
+export function createOGGeometry() {
+  return extrude([createOGlyphShape(), createGGlyphShape(), createGBarShape()]);
 }

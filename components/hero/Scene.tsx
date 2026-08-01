@@ -5,7 +5,6 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useReducedMotion } from "framer-motion";
 import * as THREE from "three";
-import AsteroidField from "./AsteroidField";
 import OGMonogram from "./OGMonogram";
 import Particles from "./Particles";
 import SpaceEnvironment from "./SpaceEnvironment";
@@ -62,13 +61,11 @@ function SceneCanvas() {
       >
         <CameraRig />
         <ambientLight intensity={0.24} />
-        <pointLight color="#7c3aed" intensity={7} position={[2.5, 1.5, 4]} />
-        <pointLight color="#67e8f9" intensity={2.5} position={[-3, -1, 2]} />
+        <pointLight color="#7c3aed" intensity={4} position={[2.5, 1.5, 4]} />
         <directionalLight intensity={0.45} position={[3, 4, 5]} />
 
         <SpaceEnvironment />
         <Particles />
-        <AsteroidField />
         <OGMonogram position={[1.25, -0.25, 0]} />
 
         {quality === "high" && (
