@@ -23,7 +23,7 @@ export default function SectionHeading({
         {title}
         {accent && (
           <span className="font-display font-normal italic tracking-[-0.01em] bg-gradient-to-r from-violet-300 via-indigo-300 to-sky-300 bg-clip-text text-transparent">
-            {accent}
+            {` ${accent}`}
           </span>
         )}
       </h2>
