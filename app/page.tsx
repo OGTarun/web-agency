@@ -3,7 +3,7 @@ import Hero from "../components/hero/Hero";
 
 export default function Home() {
   return (
-    <main className="bg-background text-foreground">
+    <main id="top" className="bg-background text-foreground">
       <Navbar />
       <Hero />
     </main>
