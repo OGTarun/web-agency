@@ -16,10 +16,15 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const nextScrolled = window.scrollY > 20;
+
+      setScrolled((currentScrolled) =>
+        currentScrolled === nextScrolled ? currentScrolled : nextScrolled,
+      );
     };
 
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -38,14 +43,14 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-8">
+      <div className="mx-auto flex h-20 max-w-[90rem] items-center justify-between px-6 sm:px-8">
         {/* Logo */}
         <motion.h1
           whileHover={{ scale: 1.05 }}
-          className="cursor-pointer text-3xl font-black tracking-wide"
+          className="flex cursor-pointer items-center gap-3"
         >
-          <span className="text-white">OG</span>
-          <span className="text-violet-500">Studios</span>
+          <span className="text-3xl font-black tracking-[-0.16em] text-white">OG</span>
+          <span className="text-[11px] font-medium uppercase tracking-[0.34em] text-white/85">Studios</span>
         </motion.h1>
 
         {/* Desktop Menu */}
@@ -58,7 +63,7 @@ export default function Navbar() {
                 y: -2,
                 color: "#A855F7",
               }}
-              className="text-white/80 transition"
+              className="text-sm tracking-[0.08em] text-white/75 transition"
             >
               {link}
             </motion.a>
@@ -74,9 +79,9 @@ export default function Navbar() {
           whileTap={{
             scale: 0.95,
           }}
-          className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 font-semibold"
+          className="rounded-full border border-white/35 bg-white/[0.025] px-6 py-3 text-sm font-medium tracking-[0.04em] text-white backdrop-blur-md"
         >
-          Start Project
+          Let&apos;s Talk
         </motion.button>
       </div>
     </motion.nav>

@@ -2,44 +2,43 @@
 
 import { motion } from "framer-motion";
 
-const words = [
-  "Build",
-  "Extraordinary",
-  "Digital",
-  "Experiences",
-];
+const words = ["Digital", "Experiences", "That Inspire"];
+
+const headlineVariants = {
+  hidden: {},
+  visible: { transition: { delayChildren: 0.16, staggerChildren: 0.14 } },
+};
+
+const wordVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.95, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
 
 export default function AnimatedHeadline() {
   return (
-    <div className="space-y-2">
-
+    <motion.h1
+      animate="visible"
+      className="flex flex-col gap-1 font-medium leading-[0.9] tracking-[-0.055em] sm:gap-2"
+      initial="hidden"
+      variants={headlineVariants}
+    >
       {words.map((word, index) => (
-        <motion.h1
+        <motion.span
           key={word}
-          initial={{
-            opacity: 0,
-            y: 60,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            delay: index * 0.2,
-            duration: 0.8,
-          }}
-          className={`font-black leading-none tracking-tight
-            ${
-              index === 1
-                ? "bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent"
-                : "text-white"
-            }
-            text-5xl sm:text-6xl md:text-7xl lg:text-8xl`}
+          className={`block text-5xl sm:text-6xl md:text-7xl lg:text-[5.4rem] ${
+            index === 2
+              ? "bg-gradient-to-r from-violet-300 via-indigo-300 to-sky-300 bg-clip-text text-transparent"
+              : "text-white"
+          }`}
+          variants={wordVariants}
         >
           {word}
-        </motion.h1>
+        </motion.span>
       ))}
-
-    </div>
+    </motion.h1>
   );
 }

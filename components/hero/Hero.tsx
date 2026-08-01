@@ -1,61 +1,37 @@
 "use client";
 
-import HeroBackground from "./HeroBackground";
-import MouseSpotlight from "./MouseSpotlight";
-import Scene from "./Scene";
+import dynamic from "next/dynamic";
 import AnimatedHeadline from "./AnimatedHeadline";
+import HeroBackground from "./HeroBackground";
 import HeroButtons from "./HeroButtons";
-import HeroStats from "./HeroStats";
-import FloatingGlassCard from "./FloatingGlassCard";
-import Particles from "./Particles";
+
+const Scene = dynamic(() => import("./Scene"), { ssr: false });
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#05010A]">
-
-      {/* Background */}
+    <section className="relative flex min-h-screen items-center overflow-hidden bg-[#010205]">
       <HeroBackground />
-      <MouseSpotlight />
-      <Particles />
       <Scene />
 
-      {/* Left Floating Card */}
-      <div className="absolute left-8 top-1/2 z-30 hidden -translate-y-1/2 lg:block">
-        <FloatingGlassCard
-          title="AI Automation"
-          value="Save 30+ hrs/week"
-          icon="🤖"
-        />
-      </div>
-
-      {/* Right Floating Card */}
-      <div className="absolute right-8 top-1/2 z-30 hidden -translate-y-1/2 lg:block">
-        <FloatingGlassCard
-          title="Performance"
-          value="99 Lighthouse"
-          icon="⚡"
-        />
-      </div>
-
-      {/* Main Content */}
-      <div className="relative z-40 mx-auto flex w-full max-w-7xl flex-col items-center px-6 text-center">
+      <div className="relative z-40 mx-auto flex w-full max-w-7xl flex-col items-start px-6 pb-32 pt-32 text-left sm:px-8 lg:px-10">
+        <div className="mb-7 flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.24em] text-white/55">
+          <span className="h-2 w-2 rounded-full bg-sky-400 shadow-[0_0_14px_rgba(56,189,248,.9)]" />
+          OG Studios / Digital Observatory
+        </div>
 
         <AnimatedHeadline />
 
-        <p className="mt-8 max-w-2xl text-lg leading-8 text-gray-400 md:text-xl">
-          We design premium websites, AI systems and software that help
-          ambitious brands stand out, automate workflows and scale faster.
+        <p className="mt-8 max-w-md text-base leading-8 text-white/58 md:text-lg">
+          We craft premium websites, brands, and digital systems that give ambitious companies gravity.
         </p>
 
         <HeroButtons />
-
-        <HeroStats />
-
       </div>
 
-      {/* Bottom Fade */}
-      <div className="pointer-events-none absolute bottom-0 left-0 h-48 w-full bg-gradient-to-t from-[#05010A] to-transparent" />
-
+      <div className="pointer-events-none absolute bottom-10 right-8 z-40 hidden items-center gap-3 text-[10px] font-medium uppercase tracking-[0.22em] text-white/45 md:flex">
+        <span className="h-px w-14 bg-white/25" />
+        Explore the universe
+      </div>
     </section>
   );
 }
