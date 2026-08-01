@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import { useReducedMotion } from "framer-motion";
 import * as THREE from "three";
 import AsteroidField from "./AsteroidField";
 import OGMonogram from "./OGMonogram";
@@ -21,12 +23,41 @@ function CameraRig() {
 
 function SceneCanvas() {
   const quality = useQuality();
+  const reducedMotion = useReducedMotion();
+  const container = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const element = container.current;
+    if (!element) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.05 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  const frameloop: "always" | "demand" | "never" = reducedMotion
+    ? "demand"
+    : visible
+      ? "always"
+      : "never";
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-20">
+    <div
+      ref={container}
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-20"
+    >
       <Canvas
         camera={{ fov: 42, position: [0, 0, 7] }}
         dpr={quality === "high" ? [1, 1.5] : [1, 1]}
+        frameloop={frameloop}
         gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
       >
         <CameraRig />
