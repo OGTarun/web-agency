@@ -13,6 +13,7 @@ import {
   createOGlyphGeometry,
   createPlinthGeometry,
 } from "./ogGeometry";
+import { useQuality } from "./quality";
 import { usePointerScene } from "./usePointerScene";
 
 const BASE_SCALE = 0.8;
@@ -86,6 +87,8 @@ export default function OGMonogram({ position = [0.95, -0.1, 0] }: OGMonogramPro
   const haloMaterial = useRef<THREE.MeshStandardMaterial>(null!);
   const pointer = usePointerScene();
   const reducedMotion = useReducedMotion();
+  const quality = useQuality();
+  const highQuality = quality === "high";
 
   const brushTexture = useMemo(() => createBrushTexture(), []);
 
@@ -122,20 +125,34 @@ export default function OGMonogram({ position = [0.95, -0.1, 0] }: OGMonogramPro
         clearcoatRoughness: 0.3,
         envMapIntensity: 1.5,
       }),
-      glass: new THREE.MeshPhysicalMaterial({
-        color: "#eef2ff",
-        transmission: 1,
-        thickness: 0.5,
-        ior: 1.5,
-        roughness: 0.05,
-        clearcoat: 1,
-        clearcoatRoughness: 0.05,
-        attenuationColor: new THREE.Color("#8b5cf6"),
-        attenuationDistance: 1.2,
-        emissive: new THREE.Color("#7c3aed"),
-        emissiveIntensity: 0.12,
-        envMapIntensity: 1.6,
-      }),
+      glass:
+        quality === "high"
+          ? new THREE.MeshPhysicalMaterial({
+              color: "#eef2ff",
+              transmission: 1,
+              thickness: 0.5,
+              ior: 1.5,
+              roughness: 0.05,
+              clearcoat: 1,
+              clearcoatRoughness: 0.05,
+              attenuationColor: new THREE.Color("#8b5cf6"),
+              attenuationDistance: 1.2,
+              emissive: new THREE.Color("#7c3aed"),
+              emissiveIntensity: 0.12,
+              envMapIntensity: 1.6,
+            })
+          : new THREE.MeshPhysicalMaterial({
+              color: "#b9a7f0",
+              metalness: 0,
+              roughness: 0.08,
+              clearcoat: 1,
+              clearcoatRoughness: 0.1,
+              transparent: true,
+              opacity: 0.5,
+              emissive: new THREE.Color("#7c3aed"),
+              emissiveIntensity: 0.4,
+              envMapIntensity: 1.3,
+            }),
       plinth: new THREE.MeshPhysicalMaterial({
         color: "#0a0e15",
         metalness: 0.85,
@@ -145,7 +162,7 @@ export default function OGMonogram({ position = [0.95, -0.1, 0] }: OGMonogramPro
         envMapIntensity: 0.8,
       }),
     }),
-    [brushTexture],
+    [brushTexture, quality],
   );
 
   useEffect(
@@ -195,11 +212,16 @@ export default function OGMonogram({ position = [0.95, -0.1, 0] }: OGMonogramPro
     const distance = Math.hypot(PROJECTION.x - target.x, PROJECTION.y - target.y);
     const proximity = THREE.MathUtils.clamp(1 - distance / 0.5, 0, 1);
 
+    const coreBase = highQuality ? 3.0 : 1.4;
+    const haloBase = highQuality ? 1.8 : 0.9;
+
     if (coreMaterial.current) {
-      coreMaterial.current.emissiveIntensity = 3.0 + proximity * 1.5;
+      coreMaterial.current.emissiveIntensity =
+        coreBase + proximity * (highQuality ? 1.5 : 0.6);
     }
     if (haloMaterial.current) {
-      haloMaterial.current.emissiveIntensity = 1.8 + proximity * 1.2;
+      haloMaterial.current.emissiveIntensity =
+        haloBase + proximity * (highQuality ? 1.2 : 0.5);
     }
 
     current.scale.setScalar(BASE_SCALE * (1 + proximity * 0.03));
@@ -212,7 +234,7 @@ export default function OGMonogram({ position = [0.95, -0.1, 0] }: OGMonogramPro
       rotation={[0.02, -0.05, 0]}
       scale={BASE_SCALE}
     >
-      <Environment resolution={128}>
+      <Environment resolution={highQuality ? 128 : 64}>
         <Lightformer
           color="#ffffff"
           form="rect"
@@ -265,8 +287,8 @@ export default function OGMonogram({ position = [0.95, -0.1, 0] }: OGMonogramPro
           color="#000000"
           depthWrite={false}
           emissive="#7c3aed"
-          emissiveIntensity={1.8}
-          toneMapped={false}
+          emissiveIntensity={highQuality ? 1.8 : 0.9}
+          toneMapped={!highQuality}
           transparent
           opacity={0.85}
         />
@@ -278,8 +300,8 @@ export default function OGMonogram({ position = [0.95, -0.1, 0] }: OGMonogramPro
           color="#000000"
           depthWrite={false}
           emissive="#8b5cf6"
-          emissiveIntensity={3.0}
-          toneMapped={false}
+          emissiveIntensity={highQuality ? 3.0 : 1.4}
+          toneMapped={!highQuality}
           transparent
           opacity={0.95}
         />

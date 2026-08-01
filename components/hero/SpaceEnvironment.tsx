@@ -3,6 +3,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { useQuality } from "./quality";
 
 function createRandom(seed: number) {
   let state = seed >>> 0;
@@ -56,8 +57,7 @@ function createNebulaTexture(color: NebulaColor, seed: number) {
   return texture;
 }
 
-function createGalaxyData() {
-  const count = 260;
+function createGalaxyData(count: number) {
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
   const random = createRandom(2_026_0821);
@@ -82,8 +82,7 @@ function createGalaxyData() {
   return { colors, positions };
 }
 
-function createStarPositions() {
-  const count = 340;
+function createStarPositions(count: number) {
   const positions = new Float32Array(count * 3);
   const random = createRandom(2_026_0822);
 
@@ -101,6 +100,10 @@ export default function SpaceEnvironment() {
   const nebula = useRef<THREE.Group>(null!);
   const galaxies = useRef<THREE.Group>(null!);
   const stars = useRef<THREE.Points>(null!);
+  const quality = useQuality();
+
+  const nebulaCount = quality === "high" ? 3 : 1;
+
   const textures = useMemo(
     () => [
       createNebulaTexture({ blue: 169, green: 93, opacity: 0.12, red: 36 }, 2_026_0811),
@@ -109,32 +112,47 @@ export default function SpaceEnvironment() {
     ],
     [],
   );
-  const galaxyData = useMemo(() => createGalaxyData(), []);
-  const starPositions = useMemo(() => createStarPositions(), []);
+  const galaxyData = useMemo(
+    () => createGalaxyData(quality === "high" ? 260 : 130),
+    [quality],
+  );
+  const starPositions = useMemo(
+    () => createStarPositions(quality === "high" ? 340 : 160),
+    [quality],
+  );
 
   useEffect(() => () => textures.forEach((texture) => texture.dispose()), [textures]);
 
   useFrame(({ pointer }, delta) => {
     nebula.current.position.x = THREE.MathUtils.damp(nebula.current.position.x, pointer.x * 0.08, 0.8, delta);
     nebula.current.position.y = THREE.MathUtils.damp(nebula.current.position.y, pointer.y * 0.05, 0.8, delta);
+    nebula.current.rotation.z += delta * 0.008;
     galaxies.current.position.x = THREE.MathUtils.damp(galaxies.current.position.x, pointer.x * 0.15, 1.1, delta);
     galaxies.current.position.y = THREE.MathUtils.damp(galaxies.current.position.y, pointer.y * 0.1, 1.1, delta);
+    galaxies.current.rotation.y += delta * 0.012;
     stars.current.position.x = THREE.MathUtils.damp(stars.current.position.x, pointer.x * 0.025, 0.5, delta);
     stars.current.position.y = THREE.MathUtils.damp(stars.current.position.y, pointer.y * 0.018, 0.5, delta);
   });
 
+  const sprites = [
+    { position: [1.8, 1.2, -1] as const, scale: [15, 9, 1] as const, opacity: 0.86, texture: textures[0] },
+    { position: [-4, -2.2, -1.5] as const, scale: [12, 7, 1] as const, opacity: 0.58, texture: textures[1] },
+    { position: [5, -1.8, -2] as const, scale: [11, 6, 1] as const, opacity: 0.52, texture: textures[2] },
+  ].slice(0, nebulaCount);
+
   return (
     <>
       <group ref={nebula} position={[0, 0, -6.5]}>
-        <sprite position={[1.8, 1.2, -1]} scale={[15, 9, 1]}>
-          <spriteMaterial depthWrite={false} map={textures[0]} opacity={0.86} transparent />
-        </sprite>
-        <sprite position={[-4, -2.2, -1.5]} scale={[12, 7, 1]}>
-          <spriteMaterial depthWrite={false} map={textures[1]} opacity={0.58} transparent />
-        </sprite>
-        <sprite position={[5, -1.8, -2]} scale={[11, 6, 1]}>
-          <spriteMaterial depthWrite={false} map={textures[2]} opacity={0.52} transparent />
-        </sprite>
+        {sprites.map((sprite, index) => (
+          <sprite key={index} position={sprite.position} scale={sprite.scale}>
+            <spriteMaterial
+              depthWrite={false}
+              map={sprite.texture}
+              opacity={sprite.opacity}
+              transparent
+            />
+          </sprite>
+        ))}
       </group>
 
       <group ref={galaxies}>

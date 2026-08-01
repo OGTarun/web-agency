@@ -7,6 +7,7 @@ import AsteroidField from "./AsteroidField";
 import OGMonogram from "./OGMonogram";
 import Particles from "./Particles";
 import SpaceEnvironment from "./SpaceEnvironment";
+import { SceneQualityProvider, useQuality } from "./quality";
 
 function CameraRig() {
   useFrame(({ camera, pointer }, delta) => {
@@ -18,12 +19,14 @@ function CameraRig() {
   return null;
 }
 
-export default function Scene() {
+function SceneCanvas() {
+  const quality = useQuality();
+
   return (
     <div className="pointer-events-none absolute inset-0 z-20">
       <Canvas
         camera={{ fov: 42, position: [0, 0, 7] }}
-        dpr={[1, 1.5]}
+        dpr={quality === "high" ? [1, 1.5] : [1, 1]}
         gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
       >
         <CameraRig />
@@ -37,10 +40,24 @@ export default function Scene() {
         <AsteroidField />
         <OGMonogram position={[1.25, -0.25, 0]} />
 
-        <EffectComposer multisampling={0}>
-          <Bloom intensity={0.45} luminanceSmoothing={0.55} luminanceThreshold={1.15} />
-        </EffectComposer>
+        {quality === "high" && (
+          <EffectComposer multisampling={0}>
+            <Bloom
+              intensity={0.45}
+              luminanceSmoothing={0.55}
+              luminanceThreshold={1.15}
+            />
+          </EffectComposer>
+        )}
       </Canvas>
     </div>
+  );
+}
+
+export default function Scene() {
+  return (
+    <SceneQualityProvider>
+      <SceneCanvas />
+    </SceneQualityProvider>
   );
 }

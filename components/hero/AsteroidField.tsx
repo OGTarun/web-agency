@@ -3,17 +3,16 @@
 import { useFrame } from "@react-three/fiber";
 import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { useQuality } from "./quality";
 
-const ASTEROID_COUNT = 18;
-
-function createAsteroids() {
+function createAsteroids(count: number) {
   let seed = 2_026_0823;
   const random = () => {
     seed = (seed * 1_664_525 + 1_013_904_223) >>> 0;
     return seed / 4_294_967_296;
   };
 
-  return Array.from({ length: ASTEROID_COUNT }, () => ({
+  return Array.from({ length: count }, () => ({
     position: new THREE.Vector3((random() - 0.5) * 12, (random() - 0.5) * 7, -1 + random() * 7),
     rotation: new THREE.Euler(random() * Math.PI, random() * Math.PI, random() * Math.PI),
     scale: 0.08 + random() * 0.25,
@@ -23,7 +22,9 @@ function createAsteroids() {
 export default function AsteroidField() {
   const field = useRef<THREE.Group>(null!);
   const asteroids = useRef<THREE.InstancedMesh>(null!);
-  const data = useMemo(() => createAsteroids(), []);
+  const quality = useQuality();
+  const count = quality === "high" ? 18 : 8;
+  const data = useMemo(() => createAsteroids(count), [count]);
 
   useLayoutEffect(() => {
     const object = new THREE.Object3D();
@@ -45,7 +46,7 @@ export default function AsteroidField() {
 
   return (
     <group ref={field}>
-      <instancedMesh ref={asteroids} args={[undefined, undefined, ASTEROID_COUNT]}>
+      <instancedMesh ref={asteroids} args={[undefined, undefined, count]}>
         <dodecahedronGeometry args={[1, 1]} />
         <meshStandardMaterial color="#172033" metalness={0.18} roughness={0.9} />
       </instancedMesh>

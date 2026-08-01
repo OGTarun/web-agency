@@ -3,11 +3,10 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { useQuality } from "./quality";
 
-const PARTICLE_COUNT = 64;
-
-function createParticlePositions() {
-  const positions = new Float32Array(PARTICLE_COUNT * 3);
+function createParticlePositions(count: number) {
+  const positions = new Float32Array(count * 3);
   let seed = 2_026_0803;
 
   const random = () => {
@@ -15,7 +14,7 @@ function createParticlePositions() {
     return seed / 4_294_967_296;
   };
 
-  for (let index = 0; index < PARTICLE_COUNT; index += 1) {
+  for (let index = 0; index < count; index += 1) {
     const offset = index * 3;
     const radius = 2.4 + random() * 5.8;
     const angle = random() * Math.PI * 2;
@@ -30,7 +29,9 @@ function createParticlePositions() {
 
 export default function Particles() {
   const points = useRef<THREE.Points>(null!);
-  const positions = useMemo(() => createParticlePositions(), []);
+  const quality = useQuality();
+  const count = quality === "high" ? 64 : 28;
+  const positions = useMemo(() => createParticlePositions(count), [count]);
 
   useFrame(({ pointer }, delta) => {
     points.current.rotation.x = THREE.MathUtils.damp(
