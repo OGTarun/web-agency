@@ -36,14 +36,50 @@ const services = [
   },
 ];
 
+function BlueprintLayer() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 blueprint-grid opacity-60"
+    />
+  );
+}
+
+function OrbitMark({ delay }: { delay: number }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className="absolute -bottom-6 -right-6 h-28 w-28 text-line-strong"
+      viewBox="0 0 100 100"
+      fill="none"
+    >
+      <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="0.6" />
+      <circle cx="50" cy="50" r="28" stroke="currentColor" strokeWidth="0.4" opacity="0.6" />
+      <g
+        className="text-accent-soft"
+        style={{
+          animation: "orbit 22s linear infinite",
+          animationDelay: `${delay}s`,
+          transformBox: "view-box",
+          transformOrigin: "50px 50px",
+        }}
+      >
+        <circle cx="90" cy="50" r="1.6" fill="currentColor" />
+      </g>
+    </svg>
+  );
+}
+
 export default function Services() {
   return (
     <section
       id="services"
       aria-labelledby="services-title"
-      className="scroll-mt-24 border-t border-line/60 bg-background py-28 md:py-36"
+      className="relative scroll-mt-24 overflow-hidden py-28 md:py-40"
     >
-      <div className="mx-auto max-w-6xl px-6 sm:px-8">
+      <BlueprintLayer />
+
+      <div className="relative mx-auto max-w-6xl px-6 sm:px-8">
         <SectionHeading
           eyebrow="Capabilities"
           title="Everything a modern brand needs to"
@@ -59,23 +95,25 @@ export default function Services() {
                 <motion.article
                   whileHover={{ y: -6 }}
                   transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="group flex h-full flex-col rounded-3xl border border-line bg-glass p-8 transition-colors duration-300 hover:border-accent-soft/40 hover:bg-glass-strong"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line/80 bg-glass/40 p-7 backdrop-blur-sm transition-colors duration-300 hover:border-accent-soft/30"
                 >
                   <div className="mb-10 flex items-center justify-between">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-line text-foreground transition-colors duration-300 group-hover:border-accent-soft/50 group-hover:text-accent-soft">
-                      <Icon className="h-5 w-5" strokeWidth={1.5} />
-                    </span>
-                    <span className="font-mono text-xs text-faint">
+                    <span className="font-mono text-xs tracking-[0.18em] text-faint">
                       {service.number}
+                    </span>
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-muted transition-colors duration-300 group-hover:border-accent-soft/40 group-hover:text-accent-soft">
+                      <Icon className="h-4 w-4" strokeWidth={1.5} />
                     </span>
                   </div>
 
                   <h3 className="font-sans text-lg font-medium tracking-[-0.01em] text-foreground">
                     {service.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-6 text-muted">
+                  <p className="mt-3 max-w-xs text-sm leading-6 text-muted">
                     {service.description}
                   </p>
+
+                  <OrbitMark delay={index * 1.7} />
                 </motion.article>
               </Reveal>
             );

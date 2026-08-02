@@ -3,9 +3,8 @@
 import { motion } from "framer-motion";
 
 const lines = [
-  { text: "Digital", display: false },
-  { text: "Experiences", display: false },
-  { text: "That Inspire", display: true },
+  { text: "We design", display: false },
+  { text: "the inevitable.", display: true },
 ];
 
 const headlineVariants = {
@@ -27,16 +26,16 @@ export default function AnimatedHeadline() {
   return (
     <motion.h1
       animate="visible"
-      className="font-sans font-medium leading-[0.95] tracking-[-0.045em]"
+      className="font-sans font-medium leading-[0.9] tracking-[-0.045em]"
       initial="hidden"
       variants={headlineVariants}
     >
       {lines.map(({ text, display }) => (
         <motion.span
           key={text}
-          className={`block text-[clamp(2.6rem,7vw,5.4rem)] ${
+          className={`block text-[clamp(2.8rem,7vw,5.8rem)] ${
             display
-              ? "font-display font-normal italic tracking-[-0.01em] bg-gradient-to-r from-violet-300 via-indigo-300 to-sky-300 bg-clip-text text-transparent"
+              ? "font-display font-normal italic tracking-[-0.01em] bg-gradient-to-r from-[#d9c7ff] via-[#c7d2fe] to-[#bae6fd] bg-clip-text text-transparent"
               : "text-foreground"
           }`}
           variants={lineVariants}

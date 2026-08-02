@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import SmoothScrollProvider from "../components/SmoothScrollProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,11 +23,11 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   metadataBase: new URL("https://ogstudios.example"),
   title: {
-    default: "OG Studios — Digital Experiences That Inspire",
+    default: "OG Studios — We Design the Inevitable",
     template: "%s · OG Studios",
   },
   description:
-    "OG Studios is a premium digital agency crafting websites, brands, and digital systems with cinematic craft and engineering precision.",
+    "OG Studios designs websites, brands, and digital systems. Great design is inevitable.",
   keywords: [
     "digital agency",
     "premium websites",
@@ -35,9 +36,9 @@ export const metadata: Metadata = {
     "creative development",
   ],
   openGraph: {
-    title: "OG Studios — Digital Experiences That Inspire",
+    title: "OG Studios — We Design the Inevitable",
     description:
-      "Premium websites, brands, and digital systems engineered with cinematic craft.",
+      "Websites, brands, and digital systems — done properly.",
     url: "https://ogstudios.example",
     siteName: "OG Studios",
     locale: "en_US",
@@ -45,9 +46,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "OG Studios — Digital Experiences That Inspire",
+    title: "OG Studios — We Design the Inevitable",
     description:
-      "Premium websites, brands, and digital systems engineered with cinematic craft.",
+      "Websites, brands, and digital systems — done properly.",
   },
   robots: {
     index: true,
@@ -72,7 +73,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        {children}
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
     </html>
   );

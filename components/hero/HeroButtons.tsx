@@ -58,7 +58,7 @@ export default function HeroButtons() {
       initial={{ opacity: 0, y: 24 }}
       transition={{ delay: 0.75, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
-      <MagneticButton variant="primary">Explore Our Work</MagneticButton>
+      <MagneticButton variant="primary">See the Work</MagneticButton>
       <MagneticButton variant="secondary">Start a Project</MagneticButton>
     </motion.div>
   );

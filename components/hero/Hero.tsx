@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import AnimatedHeadline from "./AnimatedHeadline";
-import HeroBackground from "./HeroBackground";
 import HeroButtons from "./HeroButtons";
 
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
@@ -18,17 +17,16 @@ export default function Hero() {
   return (
     <section
       aria-label="Hero"
-      className="relative flex min-h-svh items-center overflow-hidden bg-background"
+      className="relative flex min-h-svh items-center overflow-hidden"
     >
-      <HeroBackground />
       <Scene />
 
-      <div className="relative z-40 mx-auto flex w-full max-w-7xl flex-col items-start px-6 pb-32 pt-32 text-left sm:px-8 lg:px-10">
+      <div className="relative z-40 mx-auto flex w-full max-w-7xl flex-col items-start px-6 pb-44 pt-32 text-left sm:px-8 lg:px-10">
         <motion.p
           {...fadeUp(0.05)}
-          className="mb-7 flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.24em] text-muted"
+          className="mb-9 flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.24em] text-muted"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-accent-cyan shadow-[0_0_14px_rgba(34,211,238,0.9)]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-accent-soft" />
           OG Studios / Digital Observatory
         </motion.p>
 
@@ -36,24 +34,20 @@ export default function Hero() {
 
         <motion.p
           {...fadeUp(0.55)}
-          className="mt-8 max-w-md text-base leading-8 text-muted md:text-lg"
+          className="mt-10 max-w-sm text-base leading-8 text-muted md:text-lg"
         >
-          We craft premium websites, brands, and digital systems that give
-          ambitious companies gravity.
+          Websites, brands, and digital systems — done properly.
         </motion.p>
 
         <HeroButtons />
       </div>
 
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: 1 }}
-        className="pointer-events-none absolute bottom-10 right-8 z-40 hidden items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-faint md:flex"
-      >
-        <span className="h-px w-14 bg-line-strong" />
-        Explore the universe
-      </motion.div>
+        initial={{ opacity: 0, scaleY: 0 }}
+        animate={{ opacity: 1, scaleY: 1 }}
+        transition={{ delay: 1.6, duration: 1.2 }}
+        className="absolute bottom-0 right-10 z-40 hidden h-16 w-px origin-bottom bg-gradient-to-t from-line-strong to-transparent md:block"
+      />
     </section>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import SocialLinks from "../social/SocialIcons";
 
 const links = [
   { label: "Home", href: "#top" },
@@ -51,6 +52,9 @@ export default function Navbar() {
     <>
       <motion.nav
         aria-label="Primary"
+        initial={{ y: -18, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed left-0 top-0 z-50 w-full transition-all duration-500 ${
           scrolled || open
             ? "border-b border-line bg-background/60 backdrop-blur-xl"
@@ -84,6 +88,8 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
+            <SocialLinks size="sm" className="mr-2 hidden gap-1 xl:flex" />
+
             <a
               href="#contact"
               className="hidden rounded-full border border-violet-400/40 bg-white/[0.03] px-6 py-3 text-sm font-medium tracking-[0.04em] text-foreground transition-colors hover:border-violet-400/60 md:inline-flex"
@@ -146,9 +152,12 @@ export default function Navbar() {
               ))}
             </ul>
 
-            <p className="px-6 font-mono text-[10px] uppercase tracking-[0.28em] text-faint">
-              OG Studios / Digital Observatory
-            </p>
+            <div className="flex flex-col items-center gap-6 px-6">
+              <SocialLinks size="sm" className="justify-center gap-1.5" />
+              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-faint">
+                OG Studios / Digital Observatory
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
